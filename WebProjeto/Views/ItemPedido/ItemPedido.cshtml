@@ -1,0 +1,299 @@
+﻿@model List<WebProjeto.DataProvider.Models.ItemPedidoModel>
+@{
+    ViewBag.Title = "Item Venda";
+}
+
+<style>
+    #cabecalho_grid > thera > tr th:nth-child(2) {
+        width: 110px;
+    }
+
+    #cabecalho_grid > thera > tr th:nth-child(3) {
+        width: 200px;
+    }
+
+    #cadastro {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #cadastro_cabecalho {
+        border-bottom: 1px #dddddd solid;
+    }
+
+    #cadastro_conteudo {
+        margin-top: 20px;
+    }
+
+    #cabecalho_grid {
+        margin-bottom: 20px;
+    }
+
+    .btn-add {
+        padding: 2px;
+    }
+</style>
+<div id="cadastro">
+    <section id="cadastro_cabecalho">
+        <h1>@ViewBag.Title</h1>
+    </section>
+    <section id="cadastro_conteudo">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group" style="padding: 0px">
+                    @Html.Label("txt_produto", "Produto", new { @class = "col-md-1 control-label" })
+                    @Html.TextBox("txt_produto", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group" style="padding: 0px">
+                    @Html.Label("txt_precounit", "Preço", new { @class = "col-md-2 control-label" })
+                    @Html.TextBox("txt_precounit", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group" style="padding: 0px">
+                    @Html.Label("txt_quantidade", "Quantidade", new { @class = "col-md-1 control-label" })
+                    @Html.TextBox("txt_quantidade", null, new { @class = "form-control", @type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group" style="padding: 0px">
+                    @Html.Label("txt_desconto", "Desconto(%)", new { @class = "col-md-1 control-label" })
+                    @Html.TextBox("txt_desconto", null, new { @class = "form-control", @type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group" style="padding: 0px">
+                    @Html.Label("txt_totalitem", "Total", new { @class = "col-md-1 control-label" })
+                    @Html.TextBox("txt_totalitem", null, new { @class = "form-control", disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+        <div class="row btn-add">
+            <div class="col-md-12">
+                <a id="btn_incluir" class="btn btn-success" role="button">
+                    <i class="glyphicon glyphicon-plus"> Adicinar</i>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <table id="gri_cadastro" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%;">Produto</th>
+                                        <th style="width:15%; text-align:center">Quantidade</th>
+                                        <th style="width:15%; text-align:center">Preço Unitário</th>
+                                        <th style="width:15%; text-align:center">Desconto(%)</th>
+                                        <th style="width:15%; text-align:center">Total</th>
+                                        <th style="width:25%; text-align:center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr data-id="@item.Id">
+                                            <td>@item.Produto</td>
+                                            <td style="text-align:center">@item.Quantidade</td>
+                                            <td style="text-align:center">@String.Format("{0:C}", @item.PrecoUnitario)</td>
+                                            <td style="text-align:right">@item.PercDesconto</td>
+                                            <td style="text-align:right">@String.Format("{0:C}", @item.TotalItem)</td>
+                                            <td style="text-align:center">
+                                                <a class="btn btn-danger btn-excluir" title="excluir registro" role="button">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@Html.Hidden("id_cadastro")
+@section Scripts{
+    <script>
+
+    $('#txt_precounit').maskMoney({ prefix: 'R$', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
+
+        function adciona_item_tabela(dados) {
+            var retorno =
+                '<tr data-id=' + dados.Id + '>' +
+                '<td>' + dados.Produto + '</td>' +
+                '<td>' + dados.Quantidade + '</td>' +
+                '<td style="text-align:right">' + dados.PrecoUnitario + '</td>' +
+                '<td style="text-align:right">' + dados.PercDesconto + '</td>' +
+                '<td style="text-align:right">' + dados.TotalItem + '</td>' +
+                '<td style="text-align:center">' +
+                '<a class="btn btn-primary btn-alterar" role="button"><i class="glyphicon glyphicon-pencil"></i></a>' +
+                '<a class="btn btn-danger btn-excluir" role="button"><i class="glyphicon glyphicon-trash"></i></a>' +
+                '</td>' +
+                '</tr>';
+
+            return retorno;
+        };
+
+        $(function () {
+        $(".btn-excluir").click(function () {
+            var btn = $(this),
+                tr = btn.closest('tr'),
+                id = tr.attr('data-id'),
+                url = '@Url.Action("RemoverItemPedido", "ItemPedido")',
+                param = { 'id': id };
+
+            bootbox.confirm({
+                message: "Deseja excluir este registro?",
+                buttons: {
+                    confirm: {
+                        label: 'Sim',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Não',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.post(url, param, function (resp) {
+                            if (resp) {
+                                tr.remove();
+                                toastr.success('Registro excluído com sucesso!');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        });
+
+        $(function () {
+            $('#txt_desconto').change(function () {
+
+                var desc = $('#txt_desconto').val();
+                var subtot = $('#txt_totalitem').val();
+                if (desc > 0) {
+                    var cont = '';
+                    var result = '';
+                    cont = (subtot * desc) / 100;
+                    result = subtot - cont;
+
+                    $('#txt_totalitem').val(result).maskMoney({ prefix: 'R$', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
+                }
+            });
+        });
+
+        $(function () {
+            $('#txt_quantidade').change(function () {
+
+                var valorFormat = $('#txt_precounit').val().replace(".", "").replace(",", ".");
+                var preco = valorFormat;
+                var quant = $('#txt_quantidade').val();
+                var result = '';
+
+                result = preco * quant;
+
+                $('#txt_totalitem').val(result).maskMoney({ prefix: 'R$', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
+
+            })
+        })
+
+    $(function () {
+        $('#btn_incluir').click(function () {
+
+            var del = '=';
+            var str = location.search;
+            var variaveis = str.split(del);
+            var res = variaveis[1].split(del);
+
+            var venda = res[0];
+            var Iditem = 0;
+
+            var btn = $(this),
+                url = '@Url.Action("PersisteItemPedido", "ItemPedido")';
+            param = {
+                Id: Iditem,
+                IdVenda: venda,
+                Produto: $('#txt_produto').val(),
+                Quantidade: $('#txt_quantidade').val(),
+                PrecoUnitario: $('#txt_precounit').val(),
+                PercDesconto: $('#txt_desconto').val(),
+                TotalItem: $('#txt_totalitem').val()
+            };
+
+            $.post(url, param, function (resp) {
+                if (resp.Resultado == "OK") {
+                    if (param.Id == 0) {
+                        param.Id = resp.IdSalvo;
+                        var table = $('#grid_cadastro').find('tbody'),
+                            linha = adciona_item_tabela(param);
+
+                        table.append(linha);
+                        window.location.reload();
+                        toastr.success('Registro salvo com sucesso!');
+                    }
+                    else {
+                        var linha = $('#grid_cadastro').find('tr[data-id=' + param.Id + ']').find('td');
+                        linha
+                            .eq(0).html(param.Produto).end()
+                            .eq(1).html(param.Quantidade).end()
+                            .eq(2).html(param.PrecoUnitario).end()
+                            .eq(3).html(param.PercDesconto).end()
+                            .eq(4).html(param.TotalItem).end();
+                    }
+
+                } else if (resp.Resultado == "ERRO") {
+                    toastr.error("Ocorreu erro ao adicionar registro!");
+                } else if (resp.Resultado == "AVISO") {
+                    toastr.warning("Verifique os campos obrigatórios!");
+                }
+            });
+        });
+        });
+
+    $(function () {
+        $('#txt_produto').autocomplete({
+            minChars: 2,
+            delay: 100,
+        source: function (request, response) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '@Url.Action("RecuperaTodosProdutos", "Produto")',
+                data: { Prefix: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Produto,
+                            value: item.Codigo + ' - ' + item.Nome
+                        };
+                    }));
+                }
+            });
+         },
+        renderItem: function (item, search) {
+            var itemlabel = item.label;
+            var itemvalue = item.value;
+            var itemurl = item.url;
+            search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); //unused
+            var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi"); //unused
+            return '<div class="autocomplete-suggestion" data-url="' + itemurl + '" data-val="' + itemvalue + '"><a href="' + itemurl + '">' + itemlabel + '</a></div>';
+        },
+        onSelect: function (e, term, item) {
+            var teste = item.value;
+
+        }
+        });
+    });
+
+
+    </script>
+}

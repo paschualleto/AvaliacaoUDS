@@ -1,0 +1,321 @@
+﻿@model List<WebProjeto.DataProvider.Models.PedidoModel>
+@{
+    ViewBag.Title = "Lista de Vendas";
+}
+<style>
+    #cabecalho_grid > thera > tr th:nth-child(2) {
+        width: 110px;
+    }
+
+    #cabecalho_grid > thera > tr th:nth-child(3) {
+        width: 200px;
+    }
+
+    #cadastro {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #cadastro_cabecalho {
+        border-bottom: 1px #dddddd solid;
+    }
+
+    #cadastro_conteudo {
+        margin-top: 20px;
+    }
+
+    #cabecalho_grid {
+        margin-bottom: 20px;
+    }
+</style>
+<div id="cadastro">
+    <section id="cadastro_cabecalho">
+        <h1>@ViewBag.Title</h1>
+    </section>
+    <section id="cadastro_conteudo">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div id="cabecalho_grid" class="row">
+                        <div class="col-md-12">
+                            <a id="btn_incluir" class="btn btn-success" role="button">
+                                <i class="glyphicon glyphicon-plus"> Incluir</i>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <table id="gri_cadastro" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%;">Pessoa</th>
+                                        <th style="width:15%; text-align:center">Número</th>
+                                        <th style="width:15%; text-align:center">Data Venda</th>
+                                        <th style="width:15%; text-align:center">Total Venda</th>
+                                        <th style="width:25%; text-align:center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var venda in Model)
+                                    {
+                                        <tr data-id="@venda.Id">
+                                            <td>@venda.Pessoa</td>
+                                            <td style="text-align:center">@venda.Numero</td>
+                                            <td style="text-align:center">@venda.DataVenda</td>
+                                            <td style="text-align:right">@String.Format("{0:C}", @venda.TotalVenda)</td>
+                                            <td style="text-align:center">
+                                                <a class="btn btn-primary btn-alterar" title="alterar registro" role="button">
+                                                    <i class="glyphicon glyphicon-pencil"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-excluir" title="excluir registro" role="button">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-additem" title="adicionar item" role="button">
+                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@Html.Hidden("id_cadastro")
+<div id="modal_cadastro" class="form-horizontal invisivel" role="dialog">
+    <fieldset>
+        <div class="row">
+            <div class="form-group">
+                @Html.Label("txt_pessoa", "Nome", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_pessoa", null, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                @Html.Label("txt_numero", "Número da Vanda", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_numero", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("txt_datavenda", "Data da Venda", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_datavenda", null, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="modal-footer">
+                        <a id="btn_sair" class="btn btn-default" role="button" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Sair</a>
+                        <a id="btn_confirmar" class="btn btn-success" role="button" data-dismiss="modal"><i class="glyphicon glyphicon-ok"></i>Salvar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+@section Scripts{
+    <script>
+        function abrir_form(dados) {
+
+        $('#id_cadastro').val(dados.Id);
+        $('#txt_pessoa').val(dados.Pessoa);
+        $('#txt_numero').val(dados.Numero);
+        $('#txt_datavenda').val(dados.DataVenda)
+
+        var modal_cadastro = $('#modal_cadastro');
+
+        bootbox.dialog({
+            title: 'Cadastro de Venda',
+            message: modal_cadastro
+        }).on('shown.bs.modal', function () {
+            modal_cadastro.show(0, function () {
+                $('#txt_pessoa').focus();
+            });
+        }).on('hidden.bs.modal', function () {
+            modal_cadastro.hide().appendTo('body');
+        });
+    }
+
+    function adciona_linha(dados) {
+        var retorno =
+            '<tr data-id=' + dados.Id + '>' +
+            '<td>' + dados.Pessoa + '</td>' +
+            '<td>' + dados.Numero + '</td>' +
+            '<td style="text-align:center">' + dados.DataVenda + '</td>' +
+            '<td style="text-align:center">' +
+            '<a class="btn btn-primary btn-alterar" role="button"><i class="glyphicon glyphicon-pencil"></i></a>' +
+            '<a class="btn btn-danger btn-excluir" role="button"><i class="glyphicon glyphicon-trash"></i></a>' +
+            '</td>' +
+            '</tr>';
+
+        return retorno;
+    }
+
+    $(function () {
+        $("#btn_incluir").click(function () {
+            abrir_form({
+                Id: 0,
+                Pessoa: '',
+                Numero: 0,
+                DataVenda: moment().format("DD/MM/YYYY")
+            });
+        });
+    });
+
+    $(function () {
+        $(".btn-alterar").click(function () {
+            var btn = $(this),
+                id = btn.closest('tr').attr('data-id'),
+                url = '@Url.Action("RecuperaPedido", "Pedido")';
+            param = { 'id': id };
+
+            $.post(url, param, function (resp) {
+                if (resp) {
+                    abrir_form(resp)
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $(".btn-additem").click(function () {
+            var btn = $(this),
+                id = btn.closest('tr').attr('data-id'),
+                url = '@Url.Action("RecuperaPedido", "Pedido")';
+            param = { 'id': id };
+
+            window.location.href = "/ItemPedido/ItemPedido?Localizador=" + id;
+
+            //$.post(url, param, function (resp) {
+            //    if (resp) {
+            //        abrir_form(resp)
+            //    }
+            //});
+        });
+    });
+
+    $(function () {
+        $(".btn-excluir").click(function () {
+            var btn = $(this),
+                tr = btn.closest('tr'),
+                id = tr.attr('data-id'),
+                url = '@Url.Action("ExcluirPedido", "Pedido")',
+                param = { 'id': id };
+
+            bootbox.confirm({
+                message: "Deseja excluir este registro?",
+                buttons: {
+                    confirm: {
+                        label: 'Sim',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Não',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.post(url, param, function (resp) {
+                            if (resp) {
+                                tr.remove();
+                                toastr.success('Registro excluído com sucesso!');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $("#btn_confirmar").click(function () {
+            var btn = $(this),
+                url = '@Url.Action("PersistePedido", "Pedido")';
+            param = {
+                Id: $('#id_cadastro').val(),
+                Pessoa: $('#txt_pessoa').val(),
+                DataVenda: $('#txt_datavenda').val(),
+                Numero: $('#txt_numero').val()
+            };
+
+            $.post(url, param, function (resp) {
+                if (resp.Resultado == "OK") {
+                    window.location.reload();
+                    toastr.success('Registro salvo com sucesso!');
+                    //if (param.Id == 0) {
+                    //    param.Id = resp.IdSalvo;
+                    //    var table = $('#grid_cadastro').find('tbody'),
+                    //        linha = adciona_linha(param);
+
+                    //    table.append(linha);
+                    //    window.location.reload();
+                    //    toastr.success('Registro salvo com sucesso!');
+                    //}
+                    //else {
+                    //    var linha = $('#grid_cadastro').find('tr[data-id=' + param.Id + ']').find('td');
+                    //    linha
+                    //        .eq(0).html(param.Pessoa).end()
+                    //        .eq(1).html(param.DataVenda).end()
+                    //        .eq(2).html(param.Numero).end()
+                    //        .eq(3).html(param.TotalVenda).end();
+                    //}
+
+                    //$('#modal_cadastro').parents('.bootbox').modal('hide');
+                }
+                else if (resp.Resultado == "ERRO") {
+                    toastr.error("Ocorreu erro ao salvar registro!");
+                } else if (resp.Resultado == "AVISO") {
+                    toastr.warning("Verifique os campos obrigatórios!\n" + resp.Mensagens + "\n");
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $('#txt_pessoa').autocomplete({
+            minChars: 2,
+            delay: 100,
+        source: function (request, response) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '@Url.Action("RecuperaTodasPessoa", "Pessoa")',
+                data: { Prefix: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Pessoa,
+                            value: item.Nome
+                        };
+                    }));
+                }
+            });
+         },
+        renderItem: function (item, search) {
+            var itemlabel = item.label;
+            var itemvalue = item.value;
+            var itemurl = item.url;
+            search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); //unused
+            var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi"); //unused
+            return '<div class="autocomplete-suggestion" data-url="' + itemurl + '" data-val="' + itemvalue + '"><a href="' + itemurl + '">' + itemlabel + '</a></div>';
+        },
+        onSelect: function (e, term, item) {
+            var teste = item.value;
+
+        }
+        });
+    });
+
+    </script>
+}

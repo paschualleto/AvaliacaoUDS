@@ -1,0 +1,254 @@
+﻿@model List<WebProjeto.DataProvider.Models.ProdutoModel>
+@{
+    ViewBag.Title = "Lista de Produto";
+}
+@*@section Scripts
+    {
+    <script type="text/javascript" src="@Url.Content("/Controllers/Teste.js")"></script>
+    }*@
+
+<style>
+    #cabecalho_grid > thera > tr th:nth-child(2) {
+        width: 110px;
+    }
+
+    #cabecalho_grid > thera > tr th:nth-child(3) {
+        width: 200px;
+    }
+
+    #cadastro {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #cadastro_cabecalho {
+        border-bottom: 1px #dddddd solid;
+    }
+
+    #cadastro_conteudo {
+        margin-top: 20px;
+    }
+
+    #cabecalho_grid {
+        margin-bottom: 20px;
+    }
+</style>
+<div id="cadastro">
+    <section id="cadastro_cabecalho">
+        <h1>@ViewBag.Title</h1>
+    </section>
+    <section id="cadastro_conteudo">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div id="cabecalho_grid" class="row">
+                        <div class="col-md-12">
+                            <a id="btn_incluir" class="btn btn-success" role="button">
+                                <i class="glyphicon glyphicon-plus"> Incluir</i>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <table id="grid_cadastro" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nome</th>
+                                        <th style="text-align:center;">Preço Unitário</th>
+                                        <th style="width:20%; text-align:center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var produto in Model)
+                                    {
+                                        <tr data-id="@produto.Id">
+                                            <td>@produto.Codigo</td>
+                                            <td>@produto.Nome</td>
+                                            <td style="text-align:right">@String.Format("{0:C}", @produto.PrecoUnitario)</td>
+                                            <td style="text-align:center">
+                                                <a class="btn btn-primary btn-alterar" role="button">
+                                                    <i class="glyphicon glyphicon-pencil"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-excluir" role="button">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@Html.Hidden("id_cadastro")
+<div id="modal_cadastro" class="form-horizontal invisivel" role="dialog">
+    <fieldset>
+        <div class="row">
+            <div class="form-group">
+                @Html.Label("txt_codigo", "Código*", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_codigo", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("txt_nome", "Nome*", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_nome", null, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("txt_preco", "Preço Unitário*", new { @class = "col-md-3 control-label" })
+                <div class="col-md-12">
+                    @Html.TextBox("txt_preco", null, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="modal-footer">
+                        <a id="btn_sair" class="btn btn-default" role="button" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Sair</a>
+                        <a id="btn_confirmar" class="btn btn-success" role="button" data-dismiss="modal"><i class="glyphicon glyphicon-ok"></i>Salvar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+@section Scripts{
+    <script>
+
+    $('#txt_preco').maskMoney({ prefix: 'R$', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
+
+    function abrir_form(dados) {
+        $('#id_cadastro').val(dados.Id);
+        $('#txt_codigo').val(dados.Codigo);
+        $('#txt_nome').val(dados.Nome);
+        $('#txt_preco').val(dados.PrecoUnitario);
+
+        var modal_cadastro = $('#modal_cadastro');
+
+        bootbox.dialog({
+            title: 'Cadastro de Produto',
+            message: modal_cadastro
+        }).on('shown.bs.modal', function () {
+            modal_cadastro.show(0, function () {
+                $('#txt_codigo').focus();
+            });
+        }).on('hidden.bs.modal', function () {
+            modal_cadastro.hide().appendTo('body');
+        });
+    }
+
+    function adciona_linha_tabela(dados) {
+
+        var retorno =
+            '<tr data-id=' + dados.Id + '>' +
+            '<td>' + dados.Codigo + '</td>' +
+            '<td>' + dados.Nome + '</td>' +
+            '<td style="text-align:right">' + dados.PrecoUnitario + '</td>' +
+            '<td style="text-align:center">' +
+            '<a class="btn btn-primary btn-alterar" role="button"><i class="glyphicon glyphicon-pencil"></i></a>' +
+            '<a class="btn btn-danger btn-excluir" role="button"><i class="glyphicon glyphicon-trash"></i></a>' +
+            '</td>' +
+            '</tr>';
+
+        return retorno;
+    }
+
+    $(function () {
+        $("#btn_incluir").click(function () {
+            abrir_form({
+                Id: 0,
+                Codigo: '',
+                Nome: '',
+                PrecoUnitario: ''
+            });
+        });
+    });
+
+
+
+    $(function () {
+        $(".btn-alterar").click(function () {
+            var btn = $(this),
+                id = btn.closest('tr').attr('data-id'),
+                url = '@Url.Action("RecuperaProduto", "Produto")';
+            param = { 'id': id };
+
+            $.post(url, param, function (resp) {
+                if (resp) {
+                    abrir_form(resp)
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $(".btn-excluir").click(function () {
+            var btn = $(this),
+                tr = btn.closest('tr'),
+                id = tr.attr('data-id'),
+                url = '@Url.Action("RemoverProduto", "Produto")',
+                param = { 'id': id };
+
+            bootbox.confirm({
+                message: "Deseja excluir este registro?",
+                buttons: {
+                    confirm: {
+                        label: 'Sim',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Não',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.post(url, param, function (resp) {
+                            if (resp == 'OK') {
+                                tr.remove();
+                                toastr.success('Registro excluído com sucesso!');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    $(function () {
+        $("#btn_confirmar").click(function () {
+            var btn = $(this),
+                url = '@Url.Action("PersisteProduto", "Produto")';
+            param = {
+                Id: $('#id_cadastro').val(),
+                Codigo: $('#txt_codigo').val(),
+                Nome: $('#txt_nome').val(),
+                PrecoUnitario: $('#txt_preco').val().replace(".", "")
+
+            };
+
+            $.post(url, param, function (resp) {
+                if (resp.Resultado == 'OK') {
+                    window.location.reload();
+                    toastr.success('Registro salvo com sucesso!');
+
+                } else if (resp.Resultado == "ERRO") {
+                    toastr.error("Ocorreu erro ao salvar registro. Registro já existente!");
+                } else if (resp.Resultado == "AVISO") {
+                    toastr.warning("Verifique os campos obrigatórios!");
+                }
+            });
+        });
+    });
+
+    </script>
+}

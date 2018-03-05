@@ -1,0 +1,17 @@
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.csproj.CoreCompileInputs.cache
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\WebProjeto.DataProvider.dll.config
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\WebProjeto.DataProvider.dll
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\WebProjeto.DataProvider.pdb
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\EntityFramework.dll
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\EntityFramework.SqlServer.dll
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\EntityFramework.xml
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\EntityFramework.SqlServer.xml
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.dll
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.pdb
+c:\users\juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\MySql.Data.dll
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\MySql.Data.Entity.EF6.dll
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\MySql.Data.xml
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\bin\Debug\MySql.Data.Entity.EF6.xml
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.Migrations.InitialCreate.resources
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.csproj.GenerateResource.Cache
+C:\Users\Juliano\source\repos\WebProjeto\WebProjeto.DataProvider\obj\Debug\WebProjeto.DataProvider.csprojResolveAssemblyReference.cache
